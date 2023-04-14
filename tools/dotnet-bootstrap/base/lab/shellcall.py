@@ -16,7 +16,7 @@ class ContinueOnError(Exception):
         self.reprofile = reprofile
         
     def __str__(self):
-        return '%s - %s'%(working_directory, reprofile)
+        return f'{working_directory} - {reprofile}'
 
 def ShellCall(cmd, cwd = None, lenient=False):
     if not cwd:
@@ -33,16 +33,16 @@ def ShellCall(cmd, cwd = None, lenient=False):
         with open(repro_destination, 'w') as repro_file:
             repro_file.writelines(['#!/usr/bin/env bash\n', repro_data.cmd + '\n'])
 
-        # if we're rooted    
+        # if we're rooted
         if os.getuid() == 0:
-            call('chmod +x %s'%(repro_filename), shell=True, cwd=cwd)
+            call(f'chmod +x {repro_filename}', shell=True, cwd=cwd)
 
         # prints "Rover has detected a failure"
-        print("a reproduction script was placed at : %s"%(repro_destination))
+        print(f"a reproduction script was placed at : {repro_destination}")
         print("To reproduce the failure:\n\tcd %s\n\t./%s"%(cwd, repro_filename))
 
         # meh, lets just try to keep building everything.
         if lenient:
             raise ContinueOnError(cwd, repro_filename) # if we're feeling lenient, then we will raise up this opportunity to continue.
-        
+
         os._exit(1) # if we fail a check_call then we want to bail out asap so the dev can investigate.

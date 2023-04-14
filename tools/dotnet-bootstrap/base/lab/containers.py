@@ -23,11 +23,14 @@ class Containers:
     _supported_platforms = join(dirname(realpath(__file__)), 'containers') + '/' # our 'list' of current supported platforms are the directories in this directory
 
     def Bake(self, selected_platform):
-        ShellCall("echo baking 'dotnet-bootstrap:%s'"%(selected_platform), lenient=True)
+        ShellCall(f"echo baking 'dotnet-bootstrap:{selected_platform}'", lenient=True)
         ShellCall("docker build -t \"dotnet-bootstrap:%s\" ."%(selected_platform), join(self._supported_platforms, selected_platform), lenient=True)
 
     def CleanContainerFolder(self, container, folderName):
-        ShellCall("rm -R -f %s"%(join(self._supported_platforms, container, folderName)), lenient=True)
+        ShellCall(
+            f"rm -R -f {join(self._supported_platforms, container, folderName)}",
+            lenient=True,
+        )
         
     def CleanAll(self):
         for root, platforms, files in os.walk(self._supported_platforms):
@@ -61,7 +64,7 @@ class Containers:
             break
 
     def List(self):
-        ShellCall('ls -1 %s'%(self._supported_platforms))
+        ShellCall(f'ls -1 {self._supported_platforms}')
 
 
 def PrintUsage():
